@@ -351,3 +351,71 @@ public:
 【总结】
 
 关于有序搜索查找的问题，多多考虑利用二分法。从不同角度对二分法进行使用，可以加深对二分法的理解。
+
+## 09 [寻找旋转排序数组中的最小值 II](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+
+【思路】
+
+1. 和昨天的题类似，那么应该只需要对二分法稍作修改就行了。
+
+2. 刚开始想的多个条件就行了。
+
+   ```c++
+   class Solution {
+   public:
+       int findMin(vector<int>& nums) {
+           int low = 0, high = nums.size() - 1;
+           int mid = 0;
+           while(low < high) {
+               mid = (low + high) / 2;
+               if(nums[mid] < nums[high])
+                   high = mid;
+               else if(nums[mid] > nums[high])
+                   low = mid + 1;
+               else
+                   high--; //新加的语句
+           }
+           return nums[low];
+       }
+   };
+   
+   //执行用时：0 ms, 在所有 C++ 提交中击败了100.00%的用户
+   //内存消耗：11.9 MB, 在所有 C++ 提交中击败了78.69%的用户
+   ```
+
+3. 后来想着能不能递归，结果特别慢。。。
+
+   ```c++
+   class Solution {
+   public:
+       int findMin(vector<int>& nums) {
+           int low = 0, high = nums.size() - 1;
+           int mid = 0;
+           while(low < high) {
+               mid = (low + high) / 2;
+               if(nums[mid] < nums[high])
+                   high = mid;
+               else if(nums[mid] > nums[high])
+                   low = mid + 1;
+               else{
+                   if(low == mid)
+                       return nums[low];
+                   vector<int> pre(nums.begin() + low, nums.begin() + mid);
+                   vector<int> last(nums.begin() + mid, nums.begin() + high + 1);
+                   return (findMin(pre) < findMin(last)) ? findMin(pre) : findMin(last);
+               }    
+           }
+           return nums[low];
+       }
+   };
+   
+   //执行用时：96 ms, 在所有 C++ 提交中击败了22.48%的用户
+   //内存消耗：37.8 MB, 在所有 C++ 提交中击败了5.12%的用户
+   ```
+
+[官方题解](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array-ii/solution/xun-zhao-xuan-zhuan-pai-xu-shu-zu-zhong-de-zui--16/)与思路一最开始的想法一致。
+
+【总结】
+
+​	有时没必要苛求特别的算法。
+
