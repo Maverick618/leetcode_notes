@@ -1,4 +1,4 @@
-# My Leetcode Notes  __  April 2021
+#  My Leetcode Notes  __  April 2021
 
 ## 01 [笨阶乘](https://leetcode-cn.com/problems/clumsy-factorial/)
 
@@ -239,7 +239,7 @@ public:
 
 【初始思路】
 
-1. 我能不能直接找最小值啊，vector的方法QAQ。
+1. 我能不能直接找最小值啊，find方法QAQ。
 2. 从两边逼近，找到最小值
 
 【代码】（有误）
@@ -419,3 +419,540 @@ public:
 
 ​	有时没必要苛求特别的算法。
 
+## 12 [最大数](https://leetcode-cn.com/problems/largest-number/)
+
+【初始思路】
+
+1. 基数排序？
+2. 太难了，没做出来，花了时间都没做出来
+
+[官方题解](https://leetcode-cn.com/problems/largest-number/solution/zui-da-shu-by-leetcode-solution-sid5/)
+
+[宫水三叶の相信科学系列](https://leetcode-cn.com/problems/largest-number/solution/gong-shui-san-xie-noxiang-xin-ke-xue-xi-vn86e/)
+
+## 13 [ 二叉搜索树节点最小距离](https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes/)
+
+【初始思路】
+
+1. 只需比较root->right - root 和 root - root->left的值的大小即可。
+2. 需要使用递归。
+3. 要考虑没有左右子树或只有一个子树的情况。
+
+```c++
+class Solution {
+public:
+    int minDiffInBST(TreeNode* root) {
+        if(root->left){ 
+            //有左子树
+            if(root->right){ 
+                // 左右子树都有
+                int min = ((root->val - root->left->val) < (root->right->val - root->val)) ?  (root->val - root->left->val) : (root->right->val - root->val);
+                min = (min < minDiffInBST(root->left)) ? min : minDiffInBST(root->left);
+                return (min < minDiffInBST(root->right)) ? min : minDiffInBST(root->right);
+            }
+            //只有左子树
+            return ((root->val - root->left->val) < minDiffInBST(root->left)) ? (root->val - root->left->val) : minDiffInBST(root->left);
+        }else if(root->right) // 只有右子树
+            return ((root->right->val - root->val) < minDiffInBST(root->right)) ? (root->right->val - root->val) : minDiffInBST(root->right);
+        else //叶子节点，由题可知，树不会是单个的叶子结点
+            return root->val;
+    }
+};
+
+/*
+执行结果：解答错误
+显示详情
+输入：
+[1,0,48,null,null,12,49]
+输出：
+0
+预期结果：
+1
+*/
+```
+
+【解答出错】
+
+1. 叶子结点的解决办法出现错误。
+
+【解决办法】
+
+1. 叶子节点情况下应返还最大值（100000）。
+
+2. >**提示：**
+   >
+   >- 树中节点数目在范围 `[2, 100]` 内
+   >- `0 <= Node.val <= 100000`
+
+```c++
+class Solution {
+public:
+    int minDiffInBST(TreeNode* root) {
+        if(root->left){ 
+            //有左子树
+            if(root->right){ 
+                // 左右子树都有
+                int min = ((root->val - root->left->val) < (root->right->val - root->val)) ?  (root->val - root->left->val) : (root->right->val - root->val);
+                min = (min < minDiffInBST(root->left)) ? min : minDiffInBST(root->left);
+                return (min < minDiffInBST(root->right)) ? min : minDiffInBST(root->right);
+            }
+            //只有左子树
+            return ((root->val - root->left->val) < minDiffInBST(root->left)) ? (root->val - root->left->val) : minDiffInBST(root->left);
+        }else if(root->right) // 只有右子树
+            return ((root->right->val - root->val) < minDiffInBST(root->right)) ? (root->right->val - root->val) : minDiffInBST(root->right);
+        else //叶子节点，由题可知，树不会是单个的叶子结点
+            return 100000;
+    }
+};
+
+/*
+执行结果：解答错误
+显示详情
+输入：
+[90,69,null,49,89,null,52]
+输出：
+3
+预期结果：
+1
+*/
+```
+
+【解答出错】
+
+1. “任意”结点，而不是“相邻”结点（感谢评论区[摘星](https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes/comments/644436)）。
+
+【解决办法】
+
+1. 类似中序遍历寻找间距最小（感谢评论区[Coding_Gengjiabo](https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes/comments/102121)）。
+
+```
+
+```
+
+【[官方题解](https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes/solution/er-cha-sou-suo-shu-jie-dian-zui-xiao-ju-8u87w/)】
+
+## 14 [实现 Trie (前缀树)](https://leetcode-cn.com/problems/implement-trie-prefix-tree/)
+
+【[官方题解](https://leetcode-cn.com/problems/implement-trie-prefix-tree/solution/shi-xian-trie-qian-zhui-shu-by-leetcode-ti500/)】
+
+## 15 [打家劫舍 II](https://leetcode-cn.com/problems/house-robber-ii/)
+
+【初始思路】
+
+1. **贪心算法**。
+
+   > 举出反例后发现不行
+   >
+   > 反例: {1, 3, 4, 3, 0} 
+   >
+   > 最优解应该是 3+3， 而不是 4 + 1 + 0, 不能优先选最大的？那怎么办呢？
+
+2. 不能排序，排序会打乱原有相邻关系。
+
+3. 还是考虑**贪心算法**，对于序列(x, y, z)， 如果满足 ：
+
+   1. y >= x + z， 则可以选择y而抛弃x、z。
+   2. y < x + z, 且 x 和 z 不相邻， 则抛弃y，继续贪心算法。
+   3. x 和 z 相邻，只能选择y，此时可以直接输出y。
+
+4. 如何抛弃？
+
+   1. 置零。将抛弃的选择在数组中的值置为零。
+
+5. 如何处理首尾相邻问题：
+
+   1. 添加判断语句，每次访问时考虑是否为首部或尾部。
+   2. 模长除余法(自己瞎起的名字)，对每个下标 x, nums[x]存在，则nums[(x+length-1) % length] 和nums[(i+1)%length]必然存在（就是不会有数组越界问题）。
+
+6. 如何判断贪心算法的结束？
+
+   1. 对每个已选择和已经抛弃的数据，都置为0，数组全零则输出最终结果
+
+7. 代码如下
+
+   ```c++
+   class Solution {
+   public:
+       int rob(vector<int>& nums) {
+           int len = nums.size();
+           int i = 0; // a Loop control variable
+           int max_index = 0;
+           int answer = 0;
+           bool flag = false; // whether this solution gets the answer
+           while(!flag) {
+               max_index = 0;
+               for(i = 1; i < len; i++) { // find the maximum
+                   max_index = (nums[max_index] > nums[i]) ? max_index : i;
+               }
+               // three situation
+               // for (x, y, z)
+               if (nums[max_index] >= (nums[(max_index + len - 1) % len] + nums[(max_index + 1) % len])){ // y >= x + z
+                   answer += nums[max_index];
+                   nums[max_index] = 0;
+                   nums[(max_index + len - 1) % len] = 0;
+                   nums[(max_index + 1) % len] = 0;
+               }else if(3 == len)
+                   return nums[1];
+               else // y < x + z && x and z are not adjacent
+                   nums[max_index] = 0;
+   
+               // whether gets the answer
+               for (i = 0; i < len && !nums[i]; i++)
+                   ;
+               flag = (i == len) ? 1 : 0;
+           }
+           //return answer
+           return answer;
+       }
+   };
+   
+   
+   //部分优化
+   
+   class Solution {
+   public:
+       int rob(vector<int>& nums) {
+           int len = nums.size();
+           int i = 0; // a Loop control variable
+           int max_index = 0;
+           int answer = 0;
+           bool flag = false; // whether this solution gets the answer
+           while(!flag) {
+               max_index = 0;
+               for(i = 1; i < len; i++) { // find the maximum
+                   max_index = (nums[max_index] > nums[i]) ? max_index : i;
+               }
+               // three situation
+               // for (x, y, z)
+               if (nums[max_index] >= (nums[(max_index + len - 1) % len] + nums[(max_index + 1) % len])){ // y >= x + z
+                   answer += nums[max_index];
+                   nums[max_index] = 0;
+                   nums[(max_index + len - 1) % len] = 0;
+                   nums[(max_index + 1) % len] = 0;
+               }else if(len < 4)
+                   return nums[max_index];
+               else // y < x + z && x and z are not adjacent
+                   nums[max_index] = 0;
+   
+               // whether gets the answer
+               for (i = 0; i < len && !nums[i]; i++)
+                   ;
+               flag = i == len;
+           }
+           //return answer
+           return answer;
+       }
+   };
+   ```
+
+【自己调试阶段找到的错误】
+
+> 测试样例：nums = {1, 3, 4, 3, 3};
+>
+> 答案应该是 7 但是输出为6，还是在情况判断上失策了，怎么办呢？
+>
+> 又感觉贪心走不通了。。。
+
+8. 一种递归的解决方式
+
+   ```c++
+   class Solution {
+   public:
+       int rob(vector<int> nums) { 
+           int len = nums.size();
+           int max_index = 0;
+           int i = 0;
+   
+           for (i = 0; i < len && !nums[i]; i++)
+               ;
+           if(i == len)
+               return 0;
+   
+           max_index = 0;
+           for(i = 1; i < len; i++) { // find the maximum
+               max_index = (nums[max_index] > nums[i]) ? max_index : i;
+           }
+           if(len < 4)
+               return nums[max_index];
+           
+           int temp = nums[max_index];
+   
+           nums[max_index] = 0;
+           int temp_a = rob(nums);
+   
+           nums[(max_index + len - 1) % len] = 0;
+           nums[(max_index + 1) % len] = 0;
+           int temp_b = rob(nums) + temp;
+           //return answer
+           return temp_a > temp_b ? temp_a : temp_b;
+       }
+   };
+   
+   /*
+   可惜的是
+   这种方法超时了。。
+   当数组变长时，对每个最大值都要两次递归
+   时间复杂度成指数增长，费时费资
+   */
+   ```
+
+9. 考虑可能要用动态规划，可是我不会啊。。。
+10. 太难了，我是垃圾，写的都是垃圾。
+
+【[**官方题解**](https://leetcode-cn.com/problems/house-robber-ii/solution/da-jia-jie-she-ii-by-leetcode-solution-bwja/)】
+
+## 16-1 [扰乱字符串](https://leetcode-cn.com/problems/scramble-string/)
+
+【[**官方题解**](https://leetcode-cn.com/problems/scramble-string/solution/rao-luan-zi-fu-chuan-by-leetcode-solutio-8r9t/)】
+
+## 16-2 [除自身以外数组的乘积](https://leetcode-cn.com/leetbook/read/top-interview-questions-hard/xw8dz6/)
+
+【初始思路】
+
+1. 不用除法还要再O(n)时间内完成(题目要求)？？
+
+2. 初始化输出数组，其值为输入数组向左移动后的值。
+
+   例：
+
+   输入：[1, 2, 3, 4]
+
+   输出：[2, 3, 4, 1]
+
+3. 然后，左移，数组相乘？
+4. 不行，首先，没法左移右移的，这不是队列，其次，也不支持两个数组直接乘。
+
+【有效思路】
+
+1. [yauldmar](https://leetcode-cn.com/leetbook/read/top-interview-questions-hard/xw8dz6/?discussion=2x2zaf)：最直接的想法应该是：初始化结果数组，使得每个位置都保存所有数的乘积，然后每个位置除以nums数组当前位置的值，但这样最大的问题是如果数组存在0，就有问题了，而且题目中明确不允许使用除法，这个思路排除。
+
+2. 那么我考虑将输出数组初始化为全1数组，然后设置一个临时的积temp，初始值为一，遍历数组过程中，每访问一个nums[i]，temp就乘以nums[i]，然后out[i+1]乘以temp，注意到不能越界，因此循环条件是  i < nums.size() - 1。
+
+   [a, b, c, d], [1, 1, 1, 1]
+
+   [1, 1, 1, 1] ==> [1, a, ab, abc]
+
+3. 然后，再将 (2.) 反过来执行就可以得到答案啦！
+
+4. 时间复杂度:O(2n) = O(n)
+
+5. 空间复杂度:O(1)
+
+6. 代码
+
+   ```c++
+   // 1.0
+   class Solution {
+   public:
+       vector<int> productExceptSelf(vector<int>& nums) {
+           vector<int> ans(nums.size(),1);
+           int temp = 1, len = nums.size();
+   
+           for(int i = 0; i < len - 1; i++){
+               temp *= nums[i];
+               ans[i + 1] *= temp;
+           }
+           temp = 1;
+           for(int i = len - 1; i > 0 ; i--){
+               temp *= nums[i];
+               ans[i - 1] *= temp;
+           }
+           
+           return ans;
+       }
+   };
+   
+   /*
+   执行结果：通过
+   执行用时：24 ms, 在所有 C++ 提交中击败了83.25%的用户
+   内存消耗：23.3 MB, 在所有 C++ 提交中击败了85.40%的用户
+   */
+   
+   ```
+   
+   感谢[yauldmar](https://leetcode-cn.com/leetbook/read/top-interview-questions-hard/xw8dz6/?discussion=2x2zaf), 让我发现C、两个for循环语句其实能整合在一起。
+   
+   ```c++
+   //1.1
+   class Solution {
+   public:
+       vector<int> productExceptSelf(vector<int>& nums) {
+           vector<int> ans(nums.size(),1);
+           int left = 1, right = 1, len = nums.size();
+   
+           for(int i = 0; i < len - 1; i++){
+               left *= nums[i];
+               right *= nums[len - 1 - i];
+               ans[i + 1] *= left;
+               ans[len - i - 2] *= right;
+           }
+           
+           return ans;
+       }
+   };
+   ```
+
+7. 自我思路最终想法
+
+   > 易证，若数组中存在两个为零的元素，则输出数组一定是全零数组。
+
+   ```c++
+   //2.0
+   #include<algorithm>
+   class Solution {
+   public:
+       vector<int> productExceptSelf(vector<int>& nums) {
+           if(count(nums.begin(), nums.end(), 0) > 1)
+               return vector<int>(nums.size(), 0);
+           
+           vector<int> ans(nums.size(),1);
+           int left = 1, right = 1, len = nums.size();
+   
+           for(int i = 0; i < len - 1; i++){
+               left *= nums[i];
+               right *= nums[len - 1 - i];
+               ans[i + 1] *= left;
+               ans[len - i - 2] *= right;
+           }
+           
+           return ans;
+       }
+   };
+   /*
+   参考评价
+   执行结果：通过
+   执行用时：20 ms, 在所有 C++ 提交中击败了94.43%的用户
+   内存消耗：23.3 MB, 在所有 C++ 提交中击败了90.47%
+   的用户
+   */
+   ```
+
+【[**官方题解**](https://leetcode-cn.com/problems/product-of-array-except-self/solution/chu-zi-shen-yi-wai-shu-zu-de-cheng-ji-by-leetcode-/)】【[**我的题解**](https://leetcode-cn.com/problems/product-of-array-except-self/solution/li-qiu-xiao-zhu-chu-zi-shen-yi-wai-shu-z-n6l5/)】
+
+## 17 [存在重复元素 III](https://leetcode-cn.com/problems/contains-duplicate-iii/)
+
+【初始思路】
+
+1. 遍历数组加个约束条件？时间复杂度为O(n^2)。
+
+   ```c++
+   class Solution {
+   public:
+       bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+   
+           for(int i = 0; i < nums.size() ;i++)
+               for(int j = i + 1; j < i + k + 1 && j < nums.size(); j++){
+                   if(abs(nums[i] - nums[j]) <= t)
+                       return true;
+               }
+           return false;
+       }
+   };
+   ```
+
+2. > 第一，没注意分析数据范围，int不够长
+   >
+   > [-2147483648,2147483647]
+   > 1
+   > 1
+   >
+   > 测试样例不通过
+   >
+   > 改版
+   >
+   > ```c++
+   > class Solution {
+   > public:
+   >     bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+   > 
+   >         for(int i = 0; i < nums.size() ;i++)
+   >             for(int j = i + 1; j < i + k + 1 && j < nums.size(); j++){
+   >                 if(abs((long long int)nums[i] - (long long int)nums[j]) <= t)
+   >                     return true;
+   >             }
+   >         return false;
+   >     }
+   > };
+   > ```
+   >
+   > 还是错误的，没注意数组长度限制，O(n^2) 超时。
+
+3. 考虑另外一种算法，先排序，然后看前两个元素就行了。
+4. 不行！绝对不行，排序会打乱原有的数组序，不符合题意要求。
+
+
+【[**官方题解**](https://leetcode-cn.com/problems/contains-duplicate-iii/solution/cun-zai-zhong-fu-yuan-su-iii-by-leetcode-bbkt/)】
+
+## 18 [删除有序数组中的重复项](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/)
+
+【思路】
+
+1. 此题为06日做的题的前身版本，我的思路还是和删除字符串中重复的一样。
+
+【双指针】
+
+```c++
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if(nums.size() < 2) // 题面有说数组可能为空
+            return nums.size(); 
+
+        int j = 0;
+        nums.push_back(10001); // 插入一个数据范围之外的数据，用作最后的 i + 1
+        for(int i = 0; i < nums.size() - 1; i++)
+            if(nums[i] != nums[i+1])
+                nums[j++] = nums[i];
+        return j;
+    }
+};
+```
+
+【[**官方题解**](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/solution/shan-chu-pai-xu-shu-zu-zhong-de-zhong-fu-tudo/)】
+
+【总结心得】
+
+- 多多注意题面信息，题目往往都不会错，好好理解题目意思，观察数据范围。
+
+## 19 [移除元素](https://leetcode-cn.com/problems/remove-element/)
+
+【双指针】
+
+【代码】
+
+```c++
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        int index = 0;
+        if(nums.size()){ // 数组有可能为空因此要判断一下
+            for(int i = 0; i < nums.size(); ++i)
+                if(nums[i] != val)
+                    nums[index++] = nums[i];
+        }else
+            return 0;
+        return index;
+    }
+};
+
+//改进
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        int index = 0;
+        //数组空不满足for的条件语句
+        for(int i = 0; i < nums.size(); ++i)
+            if(nums[i] != val)
+                nums[index++] = nums[i];
+        
+        return index;
+    }
+};
+
+/* 参考评价
+执行用时：0 ms, 在所有 C++ 提交中击败了100.00%的用户
+内存消耗：8.3 MB, 在所有 C++ 提交中击败了99.26%的用户
+*/
+```
+
+【[**官方题解**](https://leetcode-cn.com/problems/remove-element/solution/yi-chu-yuan-su-by-leetcode-solution-svxi/)】
